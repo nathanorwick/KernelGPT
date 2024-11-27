@@ -83,7 +83,7 @@ def query_ollm(prompt: str, temperature=0.1):
                     {"role": "user", "content": prompt},
                 ],
                 max_tokens=max_tokens,
-                stop=["}\n```"],
+                stop=["\n```"],
                 temperature=temperature,
                 n=1,
             )
@@ -105,7 +105,6 @@ def query_ollm(prompt: str, temperature=0.1):
 
     # Add the post-processing step
     answer = response.choices[0].message.content
-    answer += "}\n```"
     answer = extract_code_block(answer)
 
     return answer

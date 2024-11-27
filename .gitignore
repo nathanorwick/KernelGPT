@@ -27,3 +27,4 @@ usage
 *.jsonl
 *.json
 *.txt
+*.yaml
