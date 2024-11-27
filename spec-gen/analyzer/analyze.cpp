@@ -195,7 +195,7 @@ int main(int argc, const char **argv) {
   std::vector<std::future<void>> futures;
   auto frontendAction = newFrontendActionFactory<StructAction>();
 
-  int maxThreads = 12;
+  int maxThreads = 20;
   Semaphore sem(maxThreads);
   // Assuming 'sources' is a vector of strings containing source paths
   for (const auto &sourcePath : sources) {

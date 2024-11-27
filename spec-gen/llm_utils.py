@@ -68,8 +68,8 @@ def extract_code_block(text: str):
 
 def query_ollm(prompt: str, temperature=0.1):
     ollm_client = OpenAI(api_key="EMPTY", base_url=os.getenv("OLLM_URL"))
-    # ollm_name = "llama3"
-    ollm_name = "gemma2"
+    # "llama3" "gemma2" "deepseek-coder:6.7b"
+    ollm_name = "deepseek-coder:6.7b"
     max_tokens = 4096
     failure_count = 0
     while True:
@@ -83,7 +83,7 @@ def query_ollm(prompt: str, temperature=0.1):
                     {"role": "user", "content": prompt},
                 ],
                 max_tokens=max_tokens,
-                # stop=["}\n```"],
+                stop=["}\n```"],
                 temperature=temperature,
                 n=1,
             )
@@ -105,7 +105,7 @@ def query_ollm(prompt: str, temperature=0.1):
 
     # Add the post-processing step
     answer = response.choices[0].message.content
-    # answer += "}\n```"
+    answer += "}\n```"
     answer = extract_code_block(answer)
 
     return answer
