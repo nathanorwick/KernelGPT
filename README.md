@@ -67,7 +67,7 @@ This will create one `analyze` and one `usage` executable in the `spec-gen/analy
 You need to install `clang` and `libclang-dev` to compile the `analyze` and `usage` executables. More specifically, we need the Clang with version 14. You can install it by running the following command:
 
 ```bash
-sudo apt-get install clang-14 libclang-dev
+sudo apt-get install clang-14 libclang-14-dev
 ```
 Please refer to the [analyzer README](spec-gen/analyzer/README.md) for more information.
 </details>

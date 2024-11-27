@@ -15,3 +15,15 @@ starcoder-*/
 *.tmp
 tmp
 .cache
+
+chroot/
+*.id_rsa
+*.pub
+*.img
+
+analyze
+usage
+*.o
+*.jsonl
+*.json
+*.txt
