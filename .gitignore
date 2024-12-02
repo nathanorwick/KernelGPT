@@ -28,3 +28,4 @@ usage
 *.json
 *.txt
 *.yaml
+*.csv

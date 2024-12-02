@@ -933,33 +933,36 @@ def main():
             continue
 
         for ops_path, ops_code in ops_data.items():
-            ops_type = get_ops_type(ops_path, ops_code)
+            try:
+                ops_type = get_ops_type(ops_path, ops_code)
 
-            ops_path = Path(ops_path)
-            if ops_type in [OpsType.FS, OpsType.VIRT]:
-                logger.info(f"[{ops_name}] Generating fs/virt spec")
-                statistics = gen_driver_spec(
-                    ops_name, ops_path, ops_code, "fsvt"
-                )
-            elif ops_type == OpsType.DRIVER:
-                logger.info(f"[{ops_name}] Generating driver spec")
-                statistics = gen_driver_spec(
-                    ops_name,
-                    ops_path,
-                    ops_code,
-                )
-            elif ops_type == OpsType.SOCKET:
-                logger.info(f"[{ops_name}] Generating socket spec")
-                statistics = gen_socket_spec(
-                    ops_name,
-                    ops_path,
-                    ops_code,
-                )
-            else:
-                raise ValueError(f"Unknown ops type {ops_type}")
+                ops_path = Path(ops_path)
+                if ops_type in [OpsType.FS, OpsType.VIRT]:
+                    logger.info(f"[{ops_name}] Generating fs/virt spec")
+                    statistics = gen_driver_spec(
+                        ops_name, ops_path, ops_code, "fsvt"
+                    )
+                elif ops_type == OpsType.DRIVER:
+                    logger.info(f"[{ops_name}] Generating driver spec")
+                    statistics = gen_driver_spec(
+                        ops_name,
+                        ops_path,
+                        ops_code,
+                    )
+                elif ops_type == OpsType.SOCKET:
+                    logger.info(f"[{ops_name}] Generating socket spec")
+                    statistics = gen_socket_spec(
+                        ops_name,
+                        ops_path,
+                        ops_code,
+                    )
+                else:
+                    raise ValueError(f"Unknown ops type {ops_type}")
+                generated_ops.add(ops_name)
+                results[ops_type].append(statistics)
+            except:
+                pass
             idx += 1
-            generated_ops.add(ops_name)
-            results[ops_type].append(statistics)
 
     incurred_results = {
         OpsType.DRIVER: [],
