@@ -178,6 +178,8 @@ def prepare_run(wkd: Path, run, jobs):
     # https://github.com/google/syzkaller/issues/4746
     # Thus, we will not use `tools/syz-env`, which will fail
     # r = subprocess.run(["tools/syz-env", "make", "generate"], cwd=run_syz)
+
+    subprocess.run(["sed", "-i", "s/v2@v2.20.2/v2@v2.40.3/g", "tools/mockery.sh"], cwd=run_syz)
     r = subprocess.run(["make", "generate"], cwd=run_syz)
     check_return(r.returncode, f"generate Go files for {run_syz}")
 

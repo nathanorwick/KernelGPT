@@ -35,7 +35,7 @@ from gen_utils import (
     update_spec_dict,
     update_types,
 )
-from llm_utils import query_gpt4
+from llm_utils import query_ollm
 from loguru import logger
 from output_spec import initialize_spec_dict, is_primitive_type, output_spec
 from ret_types import RetTypes
@@ -50,7 +50,7 @@ OUTPUT_DIR = Path("spec-output")
 
 def gen_answer(prompt: str, prompt_path: Path, answer_path: Path):
     prompt_path.write_text(prompt)
-    answer = query_gpt4(prompt)
+    answer = query_ollm(prompt)
     if answer is None:
         logger.error(f"[{prompt_path}] Step 1 failed")
         return
@@ -79,7 +79,7 @@ def gen_init(file_path: Path, ops_code, ops_name, prompt_output_path, ops_type):
             ops_type,
         )
         open_prompt_path.write_text(open_prompt)
-        open_answer = query_gpt4(open_prompt)
+        open_answer = query_ollm(open_prompt)
         open_output_path.write_text(open_answer)
     else:
         open_answer = open_output_path.read_text()
@@ -181,7 +181,7 @@ def gen_sockaddr(file_path, bind_name, bind_code):
     else:
         prompt = gen_sockaddr_prompt(file_path, bind_code)
         prompt_path.write_text(prompt)
-        answer = query_gpt4(prompt)
+        answer = query_ollm(prompt)
         if answer is None:
             logger.error(f"[{file_path}] Step 0 failed")
             return
@@ -933,33 +933,36 @@ def main():
             continue
 
         for ops_path, ops_code in ops_data.items():
-            ops_type = get_ops_type(ops_path, ops_code)
+            try:
+                ops_type = get_ops_type(ops_path, ops_code)
 
-            ops_path = Path(ops_path)
-            if ops_type in [OpsType.FS, OpsType.VIRT]:
-                logger.info(f"[{ops_name}] Generating fs/virt spec")
-                statistics = gen_driver_spec(
-                    ops_name, ops_path, ops_code, "fsvt"
-                )
-            elif ops_type == OpsType.DRIVER:
-                logger.info(f"[{ops_name}] Generating driver spec")
-                statistics = gen_driver_spec(
-                    ops_name,
-                    ops_path,
-                    ops_code,
-                )
-            elif ops_type == OpsType.SOCKET:
-                logger.info(f"[{ops_name}] Generating socket spec")
-                statistics = gen_socket_spec(
-                    ops_name,
-                    ops_path,
-                    ops_code,
-                )
-            else:
-                raise ValueError(f"Unknown ops type {ops_type}")
+                ops_path = Path(ops_path)
+                if ops_type in [OpsType.FS, OpsType.VIRT]:
+                    logger.info(f"[{ops_name}] Generating fs/virt spec")
+                    statistics = gen_driver_spec(
+                        ops_name, ops_path, ops_code, "fsvt"
+                    )
+                elif ops_type == OpsType.DRIVER:
+                    logger.info(f"[{ops_name}] Generating driver spec")
+                    statistics = gen_driver_spec(
+                        ops_name,
+                        ops_path,
+                        ops_code,
+                    )
+                elif ops_type == OpsType.SOCKET:
+                    logger.info(f"[{ops_name}] Generating socket spec")
+                    statistics = gen_socket_spec(
+                        ops_name,
+                        ops_path,
+                        ops_code,
+                    )
+                else:
+                    raise ValueError(f"Unknown ops type {ops_type}")
+                generated_ops.add(ops_name)
+                results[ops_type].append(statistics)
+            except:
+                pass
             idx += 1
-            generated_ops.add(ops_name)
-            results[ops_type].append(statistics)
 
     incurred_results = {
         OpsType.DRIVER: [],
